@@ -1,0 +1,75 @@
+#card {
+    width: 80px;
+    height: 105px;
+    margin: auto;
+    font-size: 30px;
+    -webkit-perspective: 1000;
+    -moz-perspective: 1000;
+}
+
+.front,.back {
+    overflow: hidden;
+    cursor: pointer;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    backface-visibility:hidden;
+    -webkit-transition: -webkit-transform 1s ease-in;
+    -moz-transition: -moz-transform 1s ease-in;
+    -o-transition: -o-transform 1s ease-in;
+    -ms-transition: -ms-transform 1s ease-in;
+    transition: transform 1s ease-in;
+    padding: 0px;
+    background: #fff;
+    border-radius: 9px;
+
+    -webkit-box-shadow: 0 2px 7px rgba(0,0,0,.3);
+    box-shadow: 0 2px 7px rgba(0,0,0,.3);
+    position: absolute;
+    height: 100%;
+    width: 100%;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.back {
+    overflow: hidden;
+    background-color: white;
+    background-image: linear-gradient(45deg, #86fa6b 25%, transparent 25%, transparent 75%, #86fa6b 75%), 
+        linear-gradient(-45deg,#86fa6b 25%, transparent 25%, transparent 75%, #86fa6b 75%);
+    background-size:8px 8px;
+    background-position: 0 0, 0 0;
+}
+
+.front {
+    -webkit-transform: rotateY(-180deg);
+    -moz-transform: rotateY(-180deg);
+    -o-transform: rotateY(-180deg);
+    -ms-transform: rotateY(-180deg);
+    transform: rotateY(-180deg);
+    background: #fff;
+    text-align: center;    
+    padding-top: 25px;
+}
+
+#card-container {
+    display: inline-block;
+}
+
+#card-container:hover .back {
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+}
+
+#card-container:hover .front {
+    -webkit-transform: rotateY(0deg);
+    -moz-transform: rotateY(0deg);
+    -o-transform: rotateY(0deg);
+    -ms-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+}
