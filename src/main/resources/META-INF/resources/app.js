@@ -61,8 +61,16 @@ window.connect = function () {
         socket.onmessage = function (m) {
             var resp = JSON.parse(m.data);
             console.log(resp);
-            loadResult(resp.scores);
-            document.getElementById("btnShowResults").style.display = resp.allVotesAreIn ? "inline" : "none";
+
+            if (resp.showResults) {
+                $('.front').addClass('rotatefront');
+                $('.back').addClass('rotateback');
+                document.getElementById("btnShowResults").style.display = "none";
+            } else {
+                loadResult(resp.scores);
+                document.getElementById("btnShowResults").style.display = resp.allVotesAreIn ? "inline" : "none";
+            }
+
         };
     }
 };
@@ -74,20 +82,30 @@ window.scoreIt = function (myScore) {
     }
 };
 
-window.reset = function(){
+window.reset = function () {
     if (connected) {
         socket.send("reset");
+        areResultsShowing = false;
     }
 };
 
-window.logout = function(){
+window.logout = function () {
     if (connected) {
         socket.close();
         connected = false;
     }
+    areResultsShowing = false;
     document.getElementById("user").readOnly = false;
     document.getElementById("isPlayer").disabled = false;
     document.getElementById("btnConnect").style.display = "inline";
     document.getElementById("btnLogout").style.display = "none";
     loadResult([]);
 };
+
+var areResultsShowing = false;
+window.showResults = function () {
+    if (connected && !areResultsShowing) {
+        socket.send("showResults");
+        areResultsShowing = true;
+    }
+}

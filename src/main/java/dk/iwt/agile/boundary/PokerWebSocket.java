@@ -60,7 +60,7 @@ public class PokerWebSocket {
             JsonString score = (JsonString) object.get("score");
             scores.put(username, score.getString());
             broadcast(false);
-        } else if (message.contains("show")) {
+        } else if (message.contains("showResults")) {
             broadcast(true);
         } else if (message.contains("reset")) {
             scores.clear();
@@ -79,14 +79,19 @@ public class PokerWebSocket {
     }
 
     private JsonObject parseMessage(boolean showResults) {
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        scores.forEach((user, score) -> {
-            arrayBuilder.add(Json.createObjectBuilder().add("name", user).add("score", score));
-        });
-
         JsonObjectBuilder outputBuilder = Json.createObjectBuilder();
-        outputBuilder.add("scores", arrayBuilder);
-        outputBuilder.add("allVotesAreIn", hasEveryoneVoted());
+
+        if (showResults) {
+            outputBuilder.add("showResults", showResults);
+        } else {
+            JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+            scores.forEach((user, score) -> {
+                arrayBuilder.add(Json.createObjectBuilder().add("name", user).add("score", score));
+            });
+
+            outputBuilder.add("scores", arrayBuilder);
+            outputBuilder.add("allVotesAreIn", hasEveryoneVoted());
+        }
 
         return outputBuilder.build();
     }

@@ -58,7 +58,8 @@
     display: inline-block;
 }
 
-#card-container:hover .back {
+/*#card-container:hover .back {*/
+.rotateback {
     -webkit-transform: rotateY(180deg);
     -moz-transform: rotateY(180deg);
     -o-transform: rotateY(180deg);
@@ -66,7 +67,8 @@
     transform: rotateY(180deg);
 }
 
-#card-container:hover .front {
+/*#card-container:hover .front {*/
+.rotatefront {
     -webkit-transform: rotateY(0deg);
     -moz-transform: rotateY(0deg);
     -o-transform: rotateY(0deg);
