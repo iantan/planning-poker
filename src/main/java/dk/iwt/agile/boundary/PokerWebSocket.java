@@ -1,7 +1,6 @@
 package dk.iwt.agile.boundary;
 
 import java.io.StringReader;
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;

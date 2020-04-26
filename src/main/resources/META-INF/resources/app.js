@@ -4,6 +4,7 @@ import {html, render} from 'https://unpkg.com/lit-html?module';
 window.init = function () {
     generatePokerDeck();
     loadResult([]);
+    document.getElementById("divMain").style.display = "none";
 };
 
 function generatePokerDeck() {
@@ -33,9 +34,9 @@ function loadResult(scores) {
             </div>
         </div>
         `;
-    
+
     var voteTemplate = html`<div class="col text-center"><h6>Waiting for votes...</h6></div>`;
-    if (scores && scores.length > 0){
+    if (scores && scores.length > 0) {
         voteTemplate = html`${scores.map((item) => result(item))}`;
     }
     render(voteTemplate, document.getElementById("resultSection"));
@@ -59,6 +60,8 @@ window.connect = function () {
             document.getElementById("isPlayer").disabled = true;
             document.getElementById("btnConnect").style.display = "none";
             document.getElementById("btnLogout").style.display = "inline";
+            document.getElementById("divMain").style.display = "inline";
+            document.getElementById("divInitMain").style.display = "none";
             document.getElementById("clickToScore").style.display = isPlayer ? "inline" : "none";
             document.getElementById("showResults").style.display = isPlayer ? "none" : "inline";
         };
@@ -102,6 +105,8 @@ window.logout = function () {
     document.getElementById("isPlayer").disabled = false;
     document.getElementById("btnConnect").style.display = "inline";
     document.getElementById("btnLogout").style.display = "none";
+    document.getElementById("divMain").style.display = "none";
+    document.getElementById("divInitMain").style.display = "inline";
     loadResult([]);
 };
 
