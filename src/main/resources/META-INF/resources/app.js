@@ -68,18 +68,33 @@ window.connect = function () {
         socket.onmessage = function (m) {
             var resp = JSON.parse(m.data);
             console.log(resp);
-
             loadResult(resp.scores);
+
             document.getElementById("btnShowResults").style.display = resp.allVotesAreIn ? "inline" : "none";
+            $("input[type=radio]").attr('disabled', false);
 
             if (resp.showResults) {
                 $('.front').addClass('rotatefront');
                 $('.back-has-score').addClass('rotateback');
                 document.getElementById("btnShowResults").style.display = "none";
+                
+                if (hasScored(resp.scores)) {
+                    $("input[type=radio]").attr('disabled', true);
+                }
             }
         };
     }
 };
+
+function hasScored(scores){
+    var hasScored = false;
+    scores.map((item) => {
+        if (item.name === $("#user").val() && item.score !== '') {
+            hasScored = true;
+        }
+    });
+    return hasScored;
+}
 
 window.scoreIt = function (myScore) {
     var message = '{"score":"' + myScore + '"}';
