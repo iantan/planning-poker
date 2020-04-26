@@ -25,15 +25,19 @@ function loadResult(scores) {
             <div id="card-container">
                 <div id="card">
                     <div class="front">
-                        <div class="number">${item.score}</div>
+                        <div class="number">${item.score === 'infinity' ? '\u221e' : item.score}</div>
                     </div>
-                    <div class="back">
+                    <div class="${item.score === '' ? 'back-no-score' : 'back-has-score'}">
                     </div>
                 </div>
             </div>
         </div>
         `;
-    const voteTemplate = html`${scores.map((item) => result(item))}`;
+    
+    var voteTemplate = html`<div class="col text-center"><h6>Waiting for votes...</h6></div>`;
+    if (scores && scores.length > 0){
+        voteTemplate = html`${scores.map((item) => result(item))}`;
+    }
     render(voteTemplate, document.getElementById("resultSection"));
 }
 
@@ -62,15 +66,14 @@ window.connect = function () {
             var resp = JSON.parse(m.data);
             console.log(resp);
 
+            loadResult(resp.scores);
+            document.getElementById("btnShowResults").style.display = resp.allVotesAreIn ? "inline" : "none";
+
             if (resp.showResults) {
                 $('.front').addClass('rotatefront');
-                $('.back').addClass('rotateback');
+                $('.back-has-score').addClass('rotateback');
                 document.getElementById("btnShowResults").style.display = "none";
-            } else {
-                loadResult(resp.scores);
-                document.getElementById("btnShowResults").style.display = resp.allVotesAreIn ? "inline" : "none";
             }
-
         };
     }
 };

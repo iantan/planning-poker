@@ -2,7 +2,9 @@ package dk.iwt.agile.boundary;
 
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.enterprise.context.ApplicationScoped;
 import javax.json.Json;
@@ -26,30 +28,39 @@ public class PokerWebSocket {
 
     private static final Logger LOG = Logger.getLogger(PokerWebSocket.class);
 
-    Map<String, Session> sessions = new ConcurrentHashMap<>();
-    Map<String, String> scores = new ConcurrentHashMap<>();
+    private Map<String, Session> sessions = new ConcurrentHashMap<>();
+    private Map<String, String> scores = new ConcurrentHashMap<>();
+    private boolean isShowingResults = false;
+    private Set<String> players = new HashSet<>();
 
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username, @PathParam("isPlayer") Boolean isPlayer) {
         sessions.put(username, session);
         if (isPlayer) {
             scores.put(username, "");
+            players.add(username);
         }
-        broadcast(false);
+        broadcast();
     }
 
     @OnClose
     public void onClose(Session session, @PathParam("username") String username) {
         sessions.remove(username);
         scores.remove(username);
-        broadcast(false);
+        players.remove(username);
+        if (sessions.isEmpty()) {
+            isShowingResults = false;
+        }
+        broadcast();
     }
 
     @OnError
     public void onError(Session session, @PathParam("username") String username, Throwable throwable) {
         sessions.remove(username);
+        scores.remove(username);
+        players.remove(username);
         LOG.error("onError", throwable);
-        broadcast(false);
+        broadcast();
     }
 
     @OnMessage
@@ -59,18 +70,25 @@ public class PokerWebSocket {
             JsonObject object = (JsonObject) reader.read();
             JsonString score = (JsonString) object.get("score");
             scores.put(username, score.getString());
-            broadcast(false);
+            broadcast();
         } else if (message.contains("showResults")) {
-            broadcast(true);
+            this.isShowingResults = true;
+            broadcast();
         } else if (message.contains("reset")) {
-            scores.clear();
-            broadcast(false);
+            this.isShowingResults = false;
+            resetScores();
+            broadcast();
         }
     }
 
-    private void broadcast(boolean showResults) {
+    private void resetScores() {
+        scores.clear();
+        players.stream().forEach((player) -> scores.put(player, ""));
+    }
+
+    private void broadcast() {
         sessions.values().forEach(s -> {
-            s.getAsyncRemote().sendObject(parseMessage(showResults), result -> {
+            s.getAsyncRemote().sendObject(parseMessage(), result -> {
                 if (result.getException() != null) {
                     System.out.println("Unable to send message: " + result.getException());
                 }
@@ -78,20 +96,16 @@ public class PokerWebSocket {
         });
     }
 
-    private JsonObject parseMessage(boolean showResults) {
+    private JsonObject parseMessage() {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        scores.forEach((user, score) -> {
+            arrayBuilder.add(Json.createObjectBuilder().add("name", user).add("score", score));
+        });
+
         JsonObjectBuilder outputBuilder = Json.createObjectBuilder();
-
-        if (showResults) {
-            outputBuilder.add("showResults", showResults);
-        } else {
-            JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-            scores.forEach((user, score) -> {
-                arrayBuilder.add(Json.createObjectBuilder().add("name", user).add("score", score));
-            });
-
-            outputBuilder.add("scores", arrayBuilder);
-            outputBuilder.add("allVotesAreIn", hasEveryoneVoted());
-        }
+        outputBuilder.add("showResults", this.isShowingResults);
+        outputBuilder.add("scores", arrayBuilder);
+        outputBuilder.add("allVotesAreIn", hasEveryoneVoted());
 
         return outputBuilder.build();
     }
@@ -102,6 +116,6 @@ public class PokerWebSocket {
                 .filter((score) -> (score.length() > 0))
                 .map((_item) -> 1)
                 .reduce(hasScored, Integer::sum);
-        return hasScored == scores.size();
+        return scores.size() > 0 && hasScored == scores.size();
     }
 }
