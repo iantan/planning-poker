@@ -70,13 +70,13 @@ window.connect = function () {
             console.log(resp);
             loadResult(resp.scores);
 
-            document.getElementById("btnShowResults").style.display = resp.allVotesAreIn ? "inline" : "none";
+            document.getElementById("btnShowResults").style.visibility = resp.allVotesAreIn ? "visible" : "hidden";
             $("input[type=radio]").attr('disabled', false);
 
             if (resp.showResults) {
                 $('.front').addClass('rotatefront');
                 $('.back-has-score').addClass('rotateback');
-                document.getElementById("btnShowResults").style.display = "none";
+                document.getElementById("btnShowResults").style.visibility = "hidden";
                 
                 if (hasScored(resp.scores)) {
                     $("input[type=radio]").attr('disabled', true);
