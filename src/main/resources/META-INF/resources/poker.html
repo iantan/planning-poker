@@ -24,12 +24,10 @@
                             </div>
                         </div>
                         <div class="form-group text-right">
-                            <input type="checkbox" class="form-check-input" id="isPlayer">
-                            <label class="form-check-label" for="isVoter">Register as player</label>
-                        </div>
-                        <div class="form-group text-right">
-                            <button id="btnConnect" onclick="connect();" class="btn btn-primary">Connect</button>
-                            <button id="btnLogout" onclick="logout()" class="btn btn-primary" style="display: none">Logout</button>
+                            <label id="lblConnectAs">Connect as</label> 
+                            <button id="btnPlayer" onclick="connect(true);" class="btn btn-primary">Player</button>
+                            <button id="btnDealer" onclick="connect(false);" class="btn btn-warning">Dealer</button>
+                            <button id="btnLogout" onclick="logout()" class="btn btn-secondary" style="display: none">Logout</button>
                         </div>
                     </div>
                 </div>
