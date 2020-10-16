@@ -21,6 +21,6 @@ Then run it:
 ```http://127.0.0.1:9090/poker.html```
 
 # Built with
-1. Quarkus - WebSockets
-2. lit-html
-3. Bootstrap 4
+1. [Quarkus - WebSockets](https://quarkus.io/guides/websockets)
+2. [lit-html](https://lit-html.polymer-project.org/)
+3. [Bootstrap 4](https://getbootstrap.com/)
